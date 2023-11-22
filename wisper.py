@@ -3,10 +3,6 @@
 
 # In[2]:
 
-
-# whisper /Users/cogsci-lasrlab1/Downloads/MFA_data/KidTalk/EB21_KT1/K1EB212participant_chick.WAV --model medium
-# /Users/cogsci-lasrlab1/Desktop/Wisper_Work
-
 # Importing Wisper
 import whisper
 
