@@ -90,26 +90,31 @@ import whisper  # Assuming this is your audio processing library
 def list_files_in_folder(folder_path):
     if os.path.isdir(folder_path):
         files = os.listdir(folder_path)
+        output_file_path = f"{folder_path.rstrip('/').replace('/', '_')}_output.txt"
 
-        # Print header
-        print(f"{'File':<30}{'Actual':<15}{'Predicted'}")
-        print("="*70)  # Separator line
+        # Open the output file for writing
+        with open(output_file_path, 'w') as f:
+            # Write header to the file
+            f.write(f"{'File':<32}{'Actual':<15}{'Predicted'}\n")
+            f.write("="*70 + '\n')  # Separator line
 
-        for file_name in files:
-            if('.mp3' in file_name or '.wav' in file_name):
-                # Load model outside the loop to avoid reloading it for each file
-                model = whisper.load_model("base")
-                audio = whisper.load_audio(os.path.join(folder_path, file_name))
-                audio = whisper.pad_or_trim(audio)
-                mel = whisper.log_mel_spectrogram(audio).to(model.device)
-                options = whisper.DecodingOptions(language="en", fp16=False)
-                result = whisper.decode(model, mel, options)
+            for file_name in files:
+                if('.mp3' in file_name or '.wav' in file_name):
+                    # Load model outside the loop to avoid reloading it for each file
+                    model = whisper.load_model("base")
+                    audio = whisper.load_audio(os.path.join(folder_path, file_name))
+                    audio = whisper.pad_or_trim(audio)
+                    mel = whisper.log_mel_spectrogram(audio).to(model.device)
+                    options = whisper.DecodingOptions(language="en", fp16=False)
+                    result = whisper.decode(model, mel, options)
 
-                # Extract the actual word from the file name
-                actual_word = file_name[19:-4]
+                    # Extract the actual word from the file name
+                    actual_word = file_name[19:-4]
 
-                # Print formatted output
-                print(f"{file_name:<30}{actual_word:<15}{result.text}")
+                    # Write formatted output to the file
+                    f.write(f"{file_name:<32}{actual_word:<15}{result.text}\n")
+
+        print(f"Output written to {output_file_path}")
 
     else:
         print("The provided path is not a directory.")
@@ -117,7 +122,6 @@ def list_files_in_folder(folder_path):
 # Replace 'your_folder_path' with the actual path of the folder you want to open
 folder_path = 'EB21_KT1_MP3/'
 list_files_in_folder(folder_path)
-
 
 
 
